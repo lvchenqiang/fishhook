@@ -161,6 +161,8 @@ static void perform_rebinding_with_section(struct rebindings_entry *rebindings,
            *    API on some iOS/Mac reports mismatch vm protection attributes.
            * -- Lianfu Hao Jun 16th, 2021
            **/
+          // https://developer.apple.com/documentation/kernel/1585294-vm_protect
+          // 对比之前的 mprotect(https://blog.csdn.net/Roland_Sun/article/details/33728955)
           err = vm_protect (mach_task_self (), (uintptr_t)indirect_symbol_bindings, section->size, 0, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY);
           if (err == KERN_SUCCESS) {
             /**
