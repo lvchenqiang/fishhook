@@ -135,7 +135,19 @@ static void perform_rebinding_with_section(struct rebindings_entry *rebindings,
       continue;
     }
     
+    /*
+    n_un.n_strx 是这条符号的字符串,值是文件偏移相对于字符串表
+    n_type 决定了这个符号的用处,对于反编译工具来说,比如修改n_type,可以使一个私有函数变成可以用dlsym引用的函数(小t>大T)
+    n_sect 表示这条符号关联的section
+    n_desc 在定义的文件中#include <mach-o/stab.h>,注释看起来和符号类型有关.但符号类型实际是和type有关,暂时不太清楚,
+    函数的符号这个值通常为0,名字叫describe(描述),所以应该是一种可有可无的东西吧
+     n_value 对函数符号来说,这个就是和这个符号关联的值的函数的VM位置
+     n_type为0xf的时候是一般的函数符号,通常就是T,作为动态库,就是外部是可以引用的符号,但也可能是变量,
+     区分这个看n_sect,函数符号的n_sect一般为0x1,_text,为0xe或者0x1e是内部符号,通常都是小写的
+     print("n_strx:0x%x ", nn->n_un.n_strx)
+    */
       //以symtab_index作为下标，访问symbol table
+    
     uint32_t strtab_offset = symtab[symtab_index].n_un.n_strx;
       //获取到symbol_name
     char *symbol_name = strtab + strtab_offset;
